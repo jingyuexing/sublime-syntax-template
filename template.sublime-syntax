@@ -1,0 +1,85 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - template    # file extension  like XXX.template
+scope: source.template
+contexts:
+  main:
+    - include: match-string
+    - include: match-buildin-variable
+    - include: match-comment
+  match-string:
+    - include: match-single-quoted
+    - include: match-double-quoted
+  match-comment:
+    - include: match-comment-line
+    - include: match-comment-block
+    - include: match-comment-line-sharp
+  match-number:
+    - include: match-number-hex
+    - include: match-number-binary
+    - include: match-number-octal
+    - include: match-number-date
+    - include: match-number-float
+    - include: match-number-time
+  match-single-quoted:
+    - match: (')
+      scope: punctuation.definition.string.begin.template
+      push:
+        - meta_scope: string.quoted.single.template
+        - match: (')
+          scope: punctuation.definition.string.begin.template
+          pop: true
+  match-double-quoted:
+    - match: (")
+      scope: punctuation.definition.string.begin.template
+      push:
+        - meta_scope: string.quoted.double.template
+        - match: (")
+          scope: punctuation.definition.string.begin.template
+          pop: true
+  match-comment-line:
+    - match: (//)
+      comment: match like   // some comment
+      scope: punctuation.definition.comment.template
+      push:
+        - meta_scope: comment.line.double-slash.template
+        - match: $
+          pop: true
+  match-comment-line-sharp:
+    - match: (#)
+      comment: match like   # some comment
+      scope: punctuation.definition.comment.template
+      push:
+        - meta_scope: comment.line.template
+        - match: $
+          pop: true
+  match-comment-block:
+    - match: /\*
+      scope: punctuation.definition.comment.begin.template
+      push:
+        - meta_scope: comment.block.template
+        - match: \*/
+          scope: punctuation.definition.comment.end.template
+          pop: true
+  match-number-hex:
+    - match: (0[xX][0-9a-fA-F]+)|([0-9a-fA-F]+[hH])
+      scope: constant.numeric.value.hex.template meta.number.integer.hexadecimal.template
+  match-number-binary:
+    - match: ([01]+)
+      scope: constant.numeric.value.template
+  match-number-octal:
+    - match: ((\-)?[0-7]+)
+      scope: constant.numeric.value.template
+  match-number-date:
+    - match: (\d{4}((\-|/)\d{2}){2})|((\d{2}(\-|/)){2}\d{4})
+      comment: like YYYY-MM-DD or MM-DD-YYYY YYYY/MM/DD  MM/DD/YYYY
+      scope: constant.numeric.date.template
+  match-number-float:
+    - match: (\d+(\.\d+)?)
+      scope: constant.numeric.value.template
+  match-number-time:
+    - match: ((\d{2}:){2}\d+(\.\d+)?)
+      comment: like HH:MM:SS.SSS
+      scope: constant.numeric.time.template
